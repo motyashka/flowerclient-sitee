@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlowerClient → Твой лучший PvP выбор</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #141414;
+      --border: #222222;
+      --text: #e8e8e8;
+      --text-muted: #a0a0a0;
+      --text-dark: #606060;
+      --accent: #c0c0c0;
+      --accent-dark: #888888;
+      --glow: 0 0 24px rgba(180,180,180,0.12);
+      --gradient: linear-gradient(135deg, #d0d0d0, #ffffff);
+      --gradient-dark: linear-gradient(135deg, #404040, #202020);
+    }
+
+    [data-theme="light"] {
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --border: #d0d0d0;
+      --text: #111111;
+      --text-muted: #606060;
+      --text-dark: #303030;
+      --accent: #b0b0b0;
+      --accent-dark: #808080;
+      --glow: 0 0 20px rgba(0,0,0,0.06);
+      --gradient: linear-gradient(135deg, #404040, #101010);
+      --gradient-dark: linear-gradient(135deg, #e0e0e0, #f8f8f8);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      transition: all 0.4s ease;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      backdrop-filter: blur(14px);
+      background: rgba(10,10,10,0.82);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  letter-spacing: -1px;
+}
+
+    .nav-links {
+      display: flex;
+      gap: 2.8rem;
+      font-weight: 500;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .right-side {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .theme-toggle, .snow-toggle {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+
+    .theme-toggle svg, .snow-toggle svg {
+      width: 1.25em;
+      height: 1.25em;
+      display: block;
+    }
+
+    .theme-toggle:hover, .snow-toggle:hover {
+      color: var(--text);
+      transform: scale(1.18);
+    }
+
+    .btn {
+      padding: 11px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      font-size: 0.96rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow);
+    }
+
+    .btn-signin {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-signin:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-signup {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-signup:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 180px 6% 140px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 26px;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      box-shadow: var(--glow);
+      backdrop-filter: blur(6px);
+      font-size: 1.05rem;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(5rem, 11vw, 10rem);
+      line-height: 0.92;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .hero h2 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      margin-bottom: 1.6rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.35rem;
+      max-width: 820px;
+      margin: 0 auto 2.5rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .hero .description-small {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      padding: 16px 52px;
+      font-size: 1.25rem;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: var(--glow);
+      transition: all 0.35s;
+    }
+
+    .cta-getstarted {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .cta-getstarted:hover {
+      background: var(--accent-dark);
+      transform: translateY(-4px);
+    }
+
+    .cta-telegram {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .cta-telegram:hover {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-4px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 100px 0 50px;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -25px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall linear infinite;
+      color: #e0e0e0;
+      opacity: 0.75;
+      text-shadow: 0 0 6px rgba(255,255,255,0.3);
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(900deg); }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 140px 6% 100px; }
+      .hero h1 { font-size: clamp(4rem, 13vw, 8rem); }
+      .cta-group { flex-direction: column; gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <nav>
+    <div class="logo">FlowerClient</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="https://t.me/FlowerClient" target="_blank" rel="noopener noreferrer">Telegram</a>
+    </div>
+    <div class="right-side">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+      <button class="snow-toggle" id="snow-toggle" aria-label="Toggle snow"></button>
+      <button class="btn btn-signin">Sign In</button>
+      <button class="btn btn-signup">Sign Up</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">🏆 Your Best Choice</div>
+    <h1>FlowerClient</h1>
+    <h2>Твой лучший выбор в сфере PvP</h2>
+    <p>Мощность, Стабильность, Контроль</p>
+    <div class="description-small">
+      Мы сделали всё, чтобы тебе было максимально комфортно играть с нашим клиентом
+    </div>
+
+    <div class="cta-group">
+      <a href="#" class="cta-btn cta-getstarted">🚀 Get Started</a>
+      <a href="https://t.me/FlowerClient" target="_blank" rel="noopener noreferrer" 
+         class="cta-btn cta-telegram">✉️ Telegram</a>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 FlowerClient. Все права защищены.
+  </footer>
+
+  <script>
+    // Тема
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    const ICONS = {
+      sun: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.8"/><line x1="4.1" y1="4.1" x2="5.9" y2="5.9"/><line x1="18.1" y1="18.1" x2="19.9" y2="19.9"/><line x1="2.2" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.8" y2="12"/><line x1="4.1" y1="19.9" x2="5.9" y2="18.1"/><line x1="18.1" y1="5.9" x2="19.9" y2="4.1"/></g></svg>`,
+      moon: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.5 4.5A8.5 8.5 0 1 0 19 17.8 7.2 7.2 0 0 1 17.5 4.5Z"/></svg>`,
+      snow: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <!-- 6 лучей -->
+          <line x1="12" y1="3" x2="12" y2="21" />
+          <line x1="4.5" y1="7" x2="19.5" y2="17" />
+          <line x1="4.5" y1="17" x2="19.5" y2="7" />
+          <!-- маленькие ответвления на вертикальном луче -->
+          <line x1="12" y1="6" x2="10.7" y2="7.2" />
+          <line x1="12" y1="6" x2="13.3" y2="7.2" />
+          <line x1="12" y1="18" x2="10.7" y2="16.8" />
+          <line x1="12" y1="18" x2="13.3" y2="16.8" />
+          <!-- маленькие ответвления на диагоналях -->
+          <line x1="7.2" y1="9" x2="8.9" y2="8.4" />
+          <line x1="7.2" y1="9" x2="7.8" y2="10.7" />
+          <line x1="16.8" y1="15" x2="15.1" y2="15.6" />
+          <line x1="16.8" y1="15" x2="16.2" y2="13.3" />
+          <line x1="7.2" y1="15" x2="8.9" y2="15.6" />
+          <line x1="7.2" y1="15" x2="7.8" y2="13.3" />
+          <line x1="16.8" y1="9" x2="15.1" y2="8.4" />
+          <line x1="16.8" y1="9" x2="16.2" y2="10.7" />
+        </g>
+      </svg>`
+    };
+
+    function updateThemeIcon() {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      themeToggle.innerHTML = isDark ? ICONS.sun : ICONS.moon;
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcon();
+    });
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    updateThemeIcon();
+
+    // Снег
+    const snowToggle = document.getElementById('snow-toggle');
+    let snowActive = localStorage.getItem('snow') === 'true';
+
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.textContent = Math.random() > 0.5 ? '❄' : '✦';
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.fontSize = (Math.random() * 1.6 + 0.9) + 'rem';
+      flake.style.animationDuration = (Math.random() * 12 + 10) + 's';
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 25000);
+    }
+
+    let snowInterval;
+    function toggleSnow() {
+      snowActive = !snowActive;
+      localStorage.setItem('snow', snowActive);
+
+      if (snowActive) {
+        snowInterval = setInterval(createSnowflake, 250);
+        snowToggle.innerHTML = ICONS.snow;
+      } else {
+        clearInterval(snowInterval);
+        document.querySelectorAll('.snowflake').forEach(f => f.remove());
+        snowToggle.innerHTML = ICONS.snow;
+      }
+    }
+
+    snowToggle.addEventListener('click', toggleSnow);
+
+    snowToggle.innerHTML = ICONS.snow;
+    if (snowActive) toggleSnow();
+  </script>
+
+</body>
+</html>

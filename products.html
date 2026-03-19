@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products — FlowerClient</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --card: #151515;
+      --border: #242424;
+      --text: #ededed;
+      --text-muted: #9e9e9e;
+      --text-dark: #5c5c5c;
+      --accent: #bebebe;
+      --accent-dark: #808080;
+      --glow: 0 0 22px rgba(160,160,160,0.10);
+      --gradient: linear-gradient(135deg, #c8c8c8, #f5f5f5);
+    }
+
+    [data-theme="light"] {
+      --bg: #f4f4f4;
+      --card: #fefefe;
+      --border: #cccccc;
+      --text: #0f0f0f;
+      --text-muted: #5a5a5a;
+      --text-dark: #2e2e2e;
+      --accent: #a8a8a8;
+      --accent-dark: #777777;
+      --glow: 0 0 18px rgba(0,0,0,0.05);
+      --gradient: linear-gradient(135deg, #3a3a3a, #0e0e0e);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; width: 100%;
+      backdrop-filter: blur(14px);
+      background: rgba(11,11,11,0.84);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255,255,255,0.25);
+      letter-spacing: -1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+      font-weight: 500;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+
+    .right-side {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .theme-toggle, .snow-toggle {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+
+    .theme-toggle svg, .snow-toggle svg {
+      width: 1.25em;
+      height: 1.25em;
+      display: block;
+    }
+
+    .theme-toggle:hover, .snow-toggle:hover {
+      color: var(--text);
+      transform: scale(1.2);
+    }
+
+    .btn {
+      padding: 11px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      font-size: 0.97rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-signin {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-signin:hover { background: var(--accent); color: var(--bg); }
+
+    .btn-signup {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-signup:hover { background: var(--accent-dark); }
+
+    main {
+      padding: 160px 6% 100px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(4.5rem, 10vw, 8.5rem);
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.2rem;
+      font-weight: 900;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      margin-bottom: 4rem;
+    }
+
+    /* Сетка продуктов */
+    .products-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--glow);
+      border-color: var(--accent);
+    }
+
+    .product-card .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 14px;
+      background: var(--accent-dark);
+      color: var(--text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .product-header {
+      padding: 1.8rem 1.8rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .product-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .product-price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .product-price small {
+      font-size: 1rem;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .product-desc {
+      padding: 0 1.8rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .product-features {
+      padding: 0 1.8rem 2rem;
+      list-style: none;
+    }
+
+    .product-features li {
+      margin: 0.9rem 0;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    .product-features li.good::before {
+      content: "✔ ";
+      color: var(--text);
+      margin-right: 0.8rem;
+      font-weight: bold;
+    }
+
+    .product-features li.bad {
+      color: var(--text-dark);
+    }
+
+    .product-features li.bad::before {
+      content: "✗ ";
+      color: var(--text-dark);
+      margin-right: 0.8rem;
+    }
+
+    .product-action {
+      padding: 0 1.8rem 1.8rem;
+      margin-top: auto;
+    }
+
+    .product-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .product-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    .product-btn.download {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .product-btn.download:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    footer {
+      text-align: center;
+      padding: 100px 0 50px;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -25px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall linear infinite;
+      color: #d8d8d8;
+      opacity: 0.78;
+      text-shadow: 0 0 8px rgba(255,255,255,0.25);
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(1080deg); }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      main { padding: 140px 6% 80px; }
+      .products-grid { gap: 1.25rem; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <nav>
+    <div class="logo">FlowerClient</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="products.html" class="active">Products</a>
+      <a href="https://t.me/FlowerClient" target="_blank" rel="noopener noreferrer">Telegram</a>
+    </div>
+    <div class="right-side">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+      <button class="snow-toggle" id="snow-toggle" aria-label="Toggle snow"></button>
+      <button class="btn btn-signin">Sign In</button>
+      <button class="btn btn-signup">Sign Up</button>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Products</h1>
+    <div class="subtitle">Выбери подходящий тариф и начни доминировать уже сегодня</div>
+
+    <!-- Сетка продуктов -->
+    <section class="pb-24 pt-8">
+      <div class="products-grid">
+
+        <!-- Free download (Premium demo) -->
+        <div class="product-card">
+          <div class="badge">Free</div>
+          <div class="product-header">
+            <h3 class="product-title">СКАЧИВАТЬ ЭТО</h3>
+            <div class="product-price">$0.00<small>/mo</small></div>
+          </div>
+          <div class="product-desc">Временная бесплатная версия с функционалом Premium</div>
+          <ul class="product-features">
+            <li class="good">TriggerBot</li>
+            <li class="good">Movement</li>
+            <li class="good">AutoMyst</li>
+            <li class="bad">Advanced bypasses</li>
+          </ul>
+          <div class="product-action">
+            <button type="button" class="product-btn download" id="free-download-btn">Download Lite</button>
+          </div>
+        </div>
+
+        <!-- Premium pack -->
+        <div class="product-card">
+          <div class="badge">Premium</div>
+          <div class="product-header">
+            <h3 class="product-title">Premium</h3>
+            <div class="product-price">$3.00<small>Lifetime</small></div>
+          </div>
+          <div class="product-desc">Полный набор: чит + Beta + связь с разработчиком</div>
+          <ul class="product-features">
+            <li class="good">Доступ к Beta</li>
+            <li class="good">Прямая связь с разработчиком</li>
+            <li class="good">Полный функционал чита</li>
+          </ul>
+          <div class="product-action">
+            <a href="https://t.me/FlowerClient" target="_blank" class="product-btn">Купить Premium</a>
+          </div>
+        </div>
+
+        <!-- Сброс HWID -->
+        <div class="product-card">
+          <div class="badge">Addon</div>
+          <div class="product-header">
+            <h3 class="product-title">Сброс HWID</h3>
+          </div>
+          <div class="product-desc">Дополнительная услуга</div>
+          <ul class="product-features">
+            <li class="good">Сброс HWID</li>
+          </ul>
+          <div class="product-action">
+            <a href="https://t.me/FlowerClient" target="_blank" class="product-btn">Купить</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 FlowerClient. Все права защищены.
+  </footer>
+
+  <script>
+    // Тема
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    const ICONS = {
+      sun: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="21.8"/><line x1="4.1" y1="4.1" x2="5.9" y2="5.9"/><line x1="18.1" y1="18.1" x2="19.9" y2="19.9"/><line x1="2.2" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="21.8" y2="12"/><line x1="4.1" y1="19.9" x2="5.9" y2="18.1"/><line x1="18.1" y1="5.9" x2="19.9" y2="4.1"/></g></svg>`,
+      moon: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.5 4.5A8.5 8.5 0 1 0 19 17.8 7.2 7.2 0 0 1 17.5 4.5Z"/></svg>`,
+      snow: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="3" x2="12" y2="21" />
+          <line x1="4.5" y1="7" x2="19.5" y2="17" />
+          <line x1="4.5" y1="17" x2="19.5" y2="7" />
+          <line x1="12" y1="6" x2="10.7" y2="7.2" />
+          <line x1="12" y1="6" x2="13.3" y2="7.2" />
+          <line x1="12" y1="18" x2="10.7" y2="16.8" />
+          <line x1="12" y1="18" x2="13.3" y2="16.8" />
+          <line x1="7.2" y1="9" x2="8.9" y2="8.4" />
+          <line x1="7.2" y1="9" x2="7.8" y2="10.7" />
+          <line x1="16.8" y1="15" x2="15.1" y2="15.6" />
+          <line x1="16.8" y1="15" x2="16.2" y2="13.3" />
+          <line x1="7.2" y1="15" x2="8.9" y2="15.6" />
+          <line x1="7.2" y1="15" x2="7.8" y2="13.3" />
+          <line x1="16.8" y1="9" x2="15.1" y2="8.4" />
+          <line x1="16.8" y1="9" x2="16.2" y2="10.7" />
+        </g>
+      </svg>`
+    };
+
+    function updateThemeIcon() {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      themeToggle.innerHTML = isDark ? ICONS.sun : ICONS.moon;
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcon();
+    });
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    updateThemeIcon();
+
+    // Снег
+    const snowToggle = document.getElementById('snow-toggle');
+    let snowActive = localStorage.getItem('snow') === 'true';
+
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.textContent = Math.random() > 0.5 ? '❄' : '✦';
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.fontSize = (Math.random() * 1.7 + 1) + 'rem';
+      flake.style.animationDuration = (Math.random() * 14 + 10) + 's';
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 28000);
+    }
+
+    let snowInterval;
+    function toggleSnow() {
+      snowActive = !snowActive;
+      localStorage.setItem('snow', snowActive);
+
+      if (snowActive) {
+        snowInterval = setInterval(createSnowflake, 280);
+        snowToggle.innerHTML = ICONS.snow;
+      } else {
+        clearInterval(snowInterval);
+        document.querySelectorAll('.snowflake').forEach(f => f.remove());
+        snowToggle.innerHTML = ICONS.snow;
+      }
+    }
+
+    snowToggle.addEventListener('click', toggleSnow);
+
+    snowToggle.innerHTML = ICONS.snow;
+    if (snowActive) toggleSnow();
+
+    // Выбор источника скачивания для Free
+    const freeBtn = document.getElementById('free-download-btn');
+    if (freeBtn) {
+      freeBtn.addEventListener('click', () => {
+        const choice = window.prompt('Где скачать?\n1 — Яндекс.Диск\n2 — Google Drive');
+        if (choice === '1') {
+          window.open('https://disk.yandex.ru/d/uDjF3PvRq1EE9w', '_blank');
+        } else if (choice === '2') {
+          window.open('https://drive.google.com/file/d/1oQgpMMyQYh_LU1Xyj8KpBqWu2fnMplWg/view?usp=drive_link', '_blank');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
